@@ -31,10 +31,9 @@ export default function Sidebar({
   const { user, logout } = useAuth();
 
   const menuItems: MenuItem[] = [
-    { name: "Dashboard", path: "/", icon: <FiHome size={18} /> },
+    { name: "Dashboard", path: "/dashboard", icon: <FiHome size={18} /> },
     { name: "Import Data", path: "/import-data", icon: <FiUpload size={18} /> },
     { name: "Class Tracker", path: "/class-tracker", icon: <FiBookOpen size={18} /> },
-    { name: "Class Logger", path: "/class-logger", icon: <FiBookOpen size={18} /> },
     { name: "Report", path: "/report", icon: <FiBarChart2 size={18} /> },
   ];
 
@@ -43,7 +42,7 @@ export default function Sidebar({
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 z-10 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -79,7 +78,7 @@ export default function Sidebar({
             <FiUser size={18} />
           </div>
           {!collapsed && (
-            <span className="font-medium whitespace-nowrap truncate">{user?.grade}</span>
+            <span className="font-medium whitespace-nowrap truncate">{user?.grade} {user?.section}</span>
           )}
         </div>
 

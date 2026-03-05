@@ -1,26 +1,36 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const requiredFirebaseEnvVars = [
+  "VITE_FIREBASE_API_KEY",
+  "VITE_FIREBASE_AUTH_DOMAIN",
+  "VITE_FIREBASE_PROJECT_ID",
+  "VITE_FIREBASE_STORAGE_BUCKET",
+  "VITE_FIREBASE_MESSAGING_SENDER_ID",
+  "VITE_FIREBASE_APP_ID",
+  "VITE_FIREBASE_MEASUREMENT_ID",
+] as const;
+
+for (const key of requiredFirebaseEnvVars) {
+  if (!import.meta.env[key]) {
+    throw new Error(`Missing required Firebase environment variable: ${key}`);
+  }
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCcSNJYefPa5LCjAIl-WPonTK7P9PPqF14",
-  authDomain: "logging-system-64155.firebaseapp.com",
-  projectId: "logging-system-64155",
-  storageBucket: "logging-system-64155.firebasestorage.app",
-  messagingSenderId: "940176049475",
-  appId: "1:940176049475:web:63bd23ad4c632268da9bf6",
-  measurementId: "G-Z4HF3650KZ"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = getFirestore(app); 
-const analytics = getAnalytics(app);
+export const db = getFirestore(app);
+export const analytics = getAnalytics(app);

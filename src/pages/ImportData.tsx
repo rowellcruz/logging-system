@@ -3,38 +3,39 @@ import { importUsers, importTeachers, parseFile } from "../services/importDataSe
 
 type ImportType = "users" | "teachers";
 
-interface UserMapping {
+interface StudentMapping {
   email: string;
   password: string;
   grade: string;
   section: string;
+  role: string;
 }
 
 interface TeacherMapping {
-  name: string;
   grade: string;
   section: string;
-  subject: string;
   period: string;
+  subject: string;
+  teacher: string;
 }
 
 export default function ImportData() {
-  const [file, setFile] = useState<File | null>(null);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [importType, setImportType] = useState<ImportType>("users");
-  const [userMapping, setUserMapping] = useState<UserMapping>({
+  const [studentMapping, setStudentMapping] = useState<StudentMapping>({
     email: "",
     password: "",
     grade: "",
     section: "",
+    role: "",
   });
   const [teacherMapping, setTeacherMapping] = useState<TeacherMapping>({
-    name: "",
     grade: "",
     section: "",
-    subject: "",
     period: "",
+    subject: "",
+    teacher: "",
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string>("");
@@ -42,7 +43,6 @@ export default function ImportData() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
 
     const { headers, rows } = await parseFile(selectedFile);
     setHeaders(headers);
@@ -51,7 +51,7 @@ export default function ImportData() {
 
   const handleMappingChange = (field: string, value: string) => {
     if (importType === "users") {
-      setUserMapping((prev) => ({ ...prev, [field]: value }));
+      setStudentMapping((prev) => ({ ...prev, [field]: value }));
     } else {
       setTeacherMapping((prev) => ({ ...prev, [field]: value }));
     }
@@ -66,12 +66,12 @@ export default function ImportData() {
     setLoading(true);
 
     if (importType === "users") {
-      if (!userMapping.email || !userMapping.password) {
+      if (!studentMapping.email || !studentMapping.password) {
         alert("Please map email and password for users.");
         setLoading(false);
         return;
       }
-      const { success, failed, errors } = await importUsers(rows, userMapping);
+      const { success, failed, errors } = await importUsers(rows, studentMapping);
       setResult(`Success: ${success}, Failed: ${failed}\nErrors:\n${errors.join("\n")}`);
     } else {
       // Teachers
@@ -83,8 +83,8 @@ export default function ImportData() {
   };
 
   const mappingFields = importType === "users"
-    ? (["email", "password", "grade", "section"] as (keyof UserMapping)[])
-    : (["name", "grade", "section", "subject", "period"] as (keyof TeacherMapping)[]);
+    ? (["email", "password", "grade", "section", "role"] as (keyof StudentMapping)[])
+    : (["grade", "section", "period", "subject", "teacher"] as (keyof TeacherMapping)[]);
 
   return (
     <div className="p-4 max-w-xl mx-auto">
@@ -112,7 +112,7 @@ export default function ImportData() {
               <select
                 className="border rounded px-2 py-1 w-full"
                 value={
-                  importType === "users" ? userMapping[field as keyof UserMapping] : teacherMapping[field as keyof TeacherMapping]
+                  importType === "users" ? studentMapping[field as keyof StudentMapping] : teacherMapping[field as keyof TeacherMapping]
                 }
                 onChange={(e) => handleMappingChange(field, e.target.value)}
               >

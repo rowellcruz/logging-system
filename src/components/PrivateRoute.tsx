@@ -1,25 +1,29 @@
-import { type ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 interface PrivateRouteProps {
-  children: ReactNode;
+  allowedRoles?: string[];
 }
 
-export default function PrivateRoute({ children }: PrivateRouteProps) {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+export default function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
+  const { user } = useAuth();
+  const location = useLocation();
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  return <>{children}</>;
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  if (location.pathname === "/") {
+    if (["student"].includes(user.role)) {
+      return <Navigate to="/class-logger" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
+  }
+
+  return <Outlet />;
 }

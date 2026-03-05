@@ -10,7 +10,6 @@ import {
   signOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  type User,
 } from "firebase/auth";
 import { auth, db } from "../../firebase"; // make sure db is exported
 import { doc, getDoc } from "firebase/firestore";
@@ -20,6 +19,7 @@ interface AppUser {
   email: string | null;
   grade: string;
   section: string;
+  role: string;
 }
 
 interface AuthContextType {
@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             email: firebaseUser.email,
             grade: userData.grade || "",
             section: userData.section || "",
+            role: userData.role || "",
           });
         } catch (err) {
           console.error("Failed to fetch user data:", err);
@@ -60,6 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             email: firebaseUser.email,
             grade: "",
             section: "",
+            role: "",
           });
         }
       } else {
